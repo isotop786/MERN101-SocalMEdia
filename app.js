@@ -1,13 +1,29 @@
 const express = require('express');
-const app = express()
-const morgan = require('morgan')
-const {getPost} = require('./routes/post')
-const PostRoutes = require('./routes/post')
+const app = express();
+const dotenv = require('dotenv');
+const mongoose = require('mongoose')
+dotenv.config();
+const morgan = require('morgan');
+const {getPost} = require('./routes/post');
+const PostRoutes = require('./routes/post');
+const bodyParser = require('body-parser')
+
+// middleware
+
+app.use(morgan("dev"));
+app.use(bodyParser.json())
 
 
-app.use(morgan("dev"))
+// db 
+mongoose.connect(process.env.MONGO_URI)
+.then(()=>console.log('DB is connected'))
+.catch(err=>console.log('Connection faild '+err));
 
-app.use('/',PostRoutes)
+mongoose.connection.on('error',err=>{
+    console.log(`Connection is failed ${err}`);
+})
+//routes
+app.use('/',PostRoutes);
 
-const port = 80
-app.listen(port,()=> console.log(`A node server is listening on port: ${port}`))
+const port = process.env.PORT || 8000;
+app.listen(port,()=> console.log(`A node server is listening on port: ${port}`));

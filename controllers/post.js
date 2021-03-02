@@ -1,22 +1,28 @@
+const Post = require('../models/post')
+
 exports.getPosts = (req,res) =>{
     res.json({
        posts:[
-           {   
-               id:1,
-               title:"first post"
-           },
-           {   
-            id:2,
-            title:"Second post"
-        },
-        {   
-            id:3,
-            title:"third post"
-        },
-        {   
-            id:4,
-            title:"fourth post"
-        }
+          
        ]
     })
 };
+
+exports.createPost = (req,res) =>{
+    const post = new Post(req.body);
+    
+
+    post.save((err,result) =>{
+        if(err){
+            return res.status(400).json({
+                error:err
+            })
+        }
+
+        return res.status(200).json({
+            post:result
+        });
+    })
+
+
+}
